@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
-import { FLEX_CENTER, WHITE } from '@/styles';
+import { FLEX_LEFT, WHITE } from '@/styles';
 
 export const LayoutWrapper = styled.div`
   .layout-header {
-    ${FLEX_CENTER}
+    ${FLEX_LEFT}
 
     color: ${WHITE(100)};
   }

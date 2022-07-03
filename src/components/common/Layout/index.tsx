@@ -1,52 +1,75 @@
+import { useState, ReactNode, SyntheticEvent } from 'react';
+import { Tabs, Tab, Typography, Box } from '@mui/material';
+
 import { LayoutWrapper } from './styles';
-import { Breadcrumb, Layout, Menu } from 'antd';
 
-const { Header, Content, Footer } = Layout;
+interface TabPanelProps {
+  children?: ReactNode;
+  index: number;
+  value: number;
+}
 
-type Props = {
-  header?: React.ReactNode;
-  searchBar?: React.ReactNode;
-  children: React.ReactNode;
-  footer?: React.ReactNode;
-  slideSideNav?: React.ReactNode;
-  sideMenu?: React.ReactNode;
-};
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
 
-function LayoutComponent({ children }: Props) {
   return (
-    <LayoutWrapper>
-      <Layout>
-        <Header className="layout-header">
-          <div className="logo" style={{ color: '#fff' }}>
-            LOGO
-          </div>
-          <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={['2']}
-            items={new Array(15).fill(null).map((_, index) => {
-              const key = index + 1;
-              return {
-                key,
-                label: `nav ${key}`,
-              };
-            })}
-          />
-        </Header>
-        <Content style={{ padding: '0 50px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
-          <div className="site-layout-content">{children}</div>
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>
-          Ant Design ©2018 Created by Ant UED
-        </Footer>
-      </Layout>
-    </LayoutWrapper>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
   );
 }
 
-export default LayoutComponent;
+const menuTabProps = (index: number) => ({
+  id: `menu-tab-${index}`,
+  'aria-controls': `menu-tabpanel-${index}`,
+});
+
+export default function LayoutComponent({
+  children,
+}: {
+  header?: ReactNode;
+  searchBar?: ReactNode;
+  children: ReactNode;
+  footer?: ReactNode;
+  slideSideNav?: ReactNode;
+  sideMenu?: ReactNode;
+}) {
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  return (
+    <LayoutWrapper>
+      <Box sx={{ width: '100%' }}>
+        <Box
+          sx={{ borderBottom: 1, borderColor: 'divider' }}
+          className="layout-header"
+        >
+          <div className="logo" style={{ color: 'black' }}>
+            LOGO
+          </div>
+
+          <Tabs value={value} onChange={handleChange} aria-label="Menu">
+            <Tab label="Item One" {...menuTabProps(0)} />
+            <Tab label="Item Two" {...menuTabProps(1)} />
+            <Tab label="Item Three" {...menuTabProps(2)} />
+          </Tabs>
+        </Box>
+
+        <div className="app-content">{children}</div>
+      </Box>
+    </LayoutWrapper>
+  );
+}

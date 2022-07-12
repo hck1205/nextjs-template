@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 import { IU } from '@/assets';
@@ -15,6 +16,8 @@ type Props = {};
 
 function Main({}: Props) {
   const dispatch = useDispatch();
+  const router = useRouter();
+
   const value = useSelector(({ counter }: RootState) => counter.value);
 
   const plus = useCallback(() => {
@@ -31,6 +34,7 @@ function Main({}: Props) {
 
   return (
     <div>
+      <div onClick={() => router.push('/signup')}>go to signup page</div>
       <h1>Counter</h1>
       <button onClick={() => minus()}>-</button>
       <span>{value}</span>

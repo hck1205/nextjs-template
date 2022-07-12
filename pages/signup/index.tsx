@@ -1,34 +1,40 @@
-import { useState, ChangeEvent, useEffect } from 'react';
-import * as R from 'ramda';
+import { useState, ChangeEvent } from 'react';
 import { TextField, Button } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import * as R from 'ramda';
 
+import { register, isAuthChecked } from '@/store/modules/auth';
+import { AppDispatch } from '@/store';
+
+import { SignUpInfo, SignUpInfoBool } from './types';
 import { InputWrapper, PageWrapper } from './styles';
 
 const INPUT_KEYS = {
-  USER_ID: 'userId',
-  NICKNAME: 'nickname',
   EMAIL: 'email',
+  NICKNAME: 'nickname',
   PASSWORD: 'password',
   PASSWORD_CONFIRM: 'passwordConfirm',
 };
 
-const { USER_ID, NICKNAME, EMAIL, PASSWORD, PASSWORD_CONFIRM } = INPUT_KEYS;
+const { EMAIL, NICKNAME, PASSWORD, PASSWORD_CONFIRM } = INPUT_KEYS;
 
 export default function Signup() {
-  const [values, setValues] = useState({
-    [USER_ID]: '',
-    [NICKNAME]: '',
-    [EMAIL]: '',
-    [PASSWORD]: '',
-    [PASSWORD_CONFIRM]: '',
+  const dispatch: AppDispatch = useDispatch();
+
+  const isLoggedIn = useSelector(isAuthChecked);
+
+  const [values, setValues] = useState<SignUpInfo>({
+    email: '',
+    nickname: '',
+    password: '',
+    passwordConfirm: '',
   });
 
-  const [inValid, setInvalid] = useState({
-    [USER_ID]: false,
-    [NICKNAME]: false,
-    [EMAIL]: false,
-    [PASSWORD]: false,
-    [PASSWORD_CONFIRM]: false,
+  const [inValid, setInvalid] = useState<SignUpInfoBool>({
+    email: false,
+    nickname: false,
+    password: false,
+    passwordConfirm: false,
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -43,14 +49,12 @@ export default function Signup() {
     const { key, value } = data;
 
     switch (key) {
-      case USER_ID:
+      case EMAIL:
         break;
       case NICKNAME:
         break;
-      case EMAIL:
-        break;
       case PASSWORD: {
-        const pwdValue = R.prop(PASSWORD_CONFIRM, values);
+        const pwdValue = R.prop('passwordConfirm', values);
         return pwdValue ? !R.equals(pwdValue, value) : false;
       }
       case PASSWORD_CONFIRM: {
@@ -73,6 +77,8 @@ export default function Signup() {
       R.pickBy((val: string, key: string) => inValid[key])
     )(values);
 
+    if (invalidKeyList.length > 0) return;
+
     // check empty values
     if (emptyKeyList.length > 0) {
       let emptyKeyValues = {};
@@ -82,33 +88,16 @@ export default function Signup() {
 
       setInvalid({ ...inValid, ...emptyKeyValues });
       return;
-    } else if (invalidKeyList.length > 0) {
-      return;
     } else {
+      dispatch(register(values)).then((data) => {
+        console.log('isLoggedIn', isLoggedIn);
+      });
     }
   };
 
   return (
     <PageWrapper>
       <InputWrapper>
-        <TextField
-          error={inValid[USER_ID]}
-          id="userId"
-          label="ID"
-          variant="outlined"
-          margin="normal"
-          helperText={inValid[USER_ID] ? '아이디 중복 애러' : ''}
-          onChange={handleChange}
-        />
-        <TextField
-          error={inValid[NICKNAME]}
-          id="nickname"
-          label="Nick name"
-          variant="outlined"
-          margin="normal"
-          helperText={''}
-          onChange={handleChange}
-        />
         <TextField
           error={inValid[EMAIL]}
           id="email"
@@ -118,6 +107,17 @@ export default function Signup() {
           helperText={''}
           onChange={handleChange}
         />
+
+        <TextField
+          error={inValid[NICKNAME]}
+          id="nickname"
+          label="Nick name"
+          variant="outlined"
+          margin="normal"
+          helperText={''}
+          onChange={handleChange}
+        />
+
         <TextField
           error={inValid[PASSWORD]}
           id="password"
@@ -127,6 +127,7 @@ export default function Signup() {
           helperText={''}
           onChange={handleChange}
         />
+
         <TextField
           error={inValid[PASSWORD_CONFIRM]}
           id="passwordConfirm"

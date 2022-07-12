@@ -7,9 +7,9 @@ import { wrapper } from '@/store';
 import 'antd/dist/antd.css';
 import '../src/assets/styles/index.scss';
 
-const withoutLayoutPathList = ['/login', '/signup'];
+const withoutLayoutPageList = ['/login', '/signup'];
 
-const withoutLayout = (path) => withoutLayoutPathList.includes(path);
+const withoutLayout = (path: string) => withoutLayoutPageList.includes(path);
 
 const RootApp = ({ Component, pageProps, ...appProps }: AppProps) => {
   return (

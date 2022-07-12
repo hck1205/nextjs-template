@@ -2,9 +2,11 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction, CombinedState, combineReducers } from 'redux';
 
 import { counter, TStoreCounter } from './counter';
+import { auth, TStoreAuth } from './auth';
 
 type RootStates = {
   counter: TStoreCounter;
+  auth: TStoreAuth;
 };
 
 const rootReducer = (
@@ -15,7 +17,7 @@ const rootReducer = (
     case HYDRATE:
       return { ...state, ...action.payload };
     default:
-      return combineReducers({ counter })(state, action);
+      return combineReducers({ counter, auth })(state, action);
   }
 };
 

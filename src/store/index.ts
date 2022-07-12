@@ -4,13 +4,19 @@ import logger from 'redux-logger';
 
 import RootReducer from './modules';
 
-const makeStore = (context) =>
-  configureStore({
-    reducer: RootReducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
-    devTools: process.env.NODE_ENV !== 'production',
-  });
+const store = configureStore({
+  reducer: RootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ thunk: true, serializableCheck: false }).concat(
+      logger
+    ),
+  devTools: process.env.NODE_ENV !== 'production',
+});
+
+const makeStore = (context) => store;
 
 export const wrapper = createWrapper(makeStore, {
   debug: process.env.NODE_ENV !== 'production',
 });
+
+export type AppDispatch = typeof store.dispatch;

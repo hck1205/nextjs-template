@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { TStoreCounter } from './types';
 
-export const name = 'counter';
+export const name: string = 'counter';
 
 const initialState: TStoreCounter = {
   value: 0,
@@ -35,4 +35,5 @@ const counterSlice = createSlice({
 
 export const { increment, decrement, increaseByAmount, decreaseByRandom } =
   counterSlice.actions;
+
 export default counterSlice.reducer;

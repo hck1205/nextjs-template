@@ -17,7 +17,9 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@/API": ["src/API"],
       "@/components": ["src/components"],
+      "@/pages/*": ["pages/*"],
       "@/store": ["src/store"],
       "@/store/*": ["src/store/*"],
       "@/assets": ["src/assets"],

@@ -1,11 +1,9 @@
 import { useState, ChangeEvent } from 'react';
 import { TextField, Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
+
 import * as R from 'ramda';
 
-import { register } from '@/store/modules/auth';
-import { AppDispatch } from '@/store';
-
+import { useSignUpMutation } from '@/API';
 import { SignUpInfo, SignUpInfoBool } from './types';
 import { InputWrapper, PageWrapper } from './styles';
 import { NextRouter, useRouter } from 'next/router';
@@ -22,8 +20,9 @@ const { EMAIL, NICKNAME, PASSWORD, PASSWORD_CONFIRM } = INPUT_KEYS;
 const sessionStorage = globalThis?.sessionStorage;
 
 export default function Signup() {
-  const dispatch: AppDispatch = useDispatch();
   const router: NextRouter = useRouter();
+
+  const [signUp] = useSignUpMutation();
 
   const [values, setValues] = useState<SignUpInfo>({
     email: '',
@@ -91,19 +90,22 @@ export default function Signup() {
       setInvalid({ ...inValid, ...emptyKeyValues });
       return;
     } else {
-      dispatch(register(values)).then((data) => {
-        const isLoggedin = R.compose(
-          R.equals('fulfilled'),
-          R.pathOr('', ['meta', 'requestStatus'])
-        )(data);
+      signUp(values)
+        .then((data) => {
+          const isLoggedin = R.compose(
+            R.equals('completed'),
+            R.propOr('', 'status')
+          )(data);
 
-        if (isLoggedin) {
-          const prevPath = sessionStorage?.getItem('prevPath');
-          const goToPath = prevPath === '/signup' || !prevPath ? '/' : prevPath;
+          if (isLoggedin) {
+            const prevPath = sessionStorage?.getItem('prevPath');
+            const goToPath =
+              prevPath === '/signup' || !prevPath ? '/' : prevPath;
 
-          router.push(goToPath);
-        }
-      });
+            router.push(goToPath);
+          }
+        })
+        .catch((e) => console.error('[SignUp Error]: ', e));
     }
   };
 

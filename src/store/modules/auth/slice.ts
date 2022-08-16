@@ -1,9 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { stat } from 'fs';
-import extraReducers from './extraReducers';
-import { TStoreAuth } from './types';
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialState: TStoreAuth = {
+const initialState = {
   userInfo: {
     email: '',
     nickname: '',
@@ -21,7 +18,6 @@ const authSlice = createSlice({
       state.userInfo = payload;
     },
   },
-  extraReducers,
 });
 
 // actions

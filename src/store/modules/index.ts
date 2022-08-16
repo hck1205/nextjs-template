@@ -1,13 +1,17 @@
 import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction, CombinedState, combineReducers } from 'redux';
 
-import { counter, TStoreCounter } from './counter';
-import { auth, TStoreAuth } from './auth';
+import { counter } from './counter';
+import { auth } from './auth';
+import { authApi } from '@/API';
 
-type RootStates = {
-  counter: TStoreCounter;
-  auth: TStoreAuth;
-};
+const combinedReducers = combineReducers({
+  auth,
+  counter,
+  [authApi.reducerPath]: authApi.reducer,
+});
+
+type RootStates = ReturnType<typeof combinedReducers>;
 
 const rootReducer = (
   state: RootStates,
@@ -17,7 +21,7 @@ const rootReducer = (
     case HYDRATE:
       return { ...state, ...action.payload };
     default:
-      return combineReducers({ counter, auth })(state, action);
+      return combinedReducers(state, action);
   }
 };
 

@@ -23,7 +23,7 @@ export const authApi = createApi({
       query: (params) => ({
         url: '/auth/signin',
         method: 'POST',
-        body: params,
+        body: { email: params.userId, password: params.password },
       }),
     }),
     signUp: builder.mutation({

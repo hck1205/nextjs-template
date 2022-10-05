@@ -1,5 +1,6 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import Link from 'next/link';
+import { useSignInMutation } from '@/API';
 import { TextField, Button } from '@mui/material';
 
 import { InputWrapper, PageWrapper } from './styles';
@@ -17,6 +18,8 @@ export default function Login() {
     password: false,
   });
 
+  const [signIn] = useSignInMutation();
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { id: key, value } = event.target;
 
@@ -26,7 +29,11 @@ export default function Login() {
 
   const goToPrevPath = () => {};
 
-  const submit = () => {};
+  const submit = () => {
+    signIn(values).then((response) => {
+      console.log('response', response);
+    });
+  };
 
   useEffect(() => {}, []);
 
